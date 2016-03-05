@@ -1,0 +1,36 @@
+\begin{thebibliography}{aNP09}
+
+\bibitem[aNP09]{russell2009artificial}
+Russell~Stuart \and Norvig~Peter.
+\newblock {\em {Artificial Intelligence: A Modern Approach}}, volume~1.
+\newblock Prentice Hall, 2009.
+
+\bibitem[Doo95]{doorenbos1995production}
+Robert~B Doorenbos.
+\newblock {\em Production matching for large learning systems}.
+\newblock PhD thesis, University of Southern California, 1995.
+
+\bibitem[For82]{forgy1982rete}
+Charles~L Forgy.
+\newblock Rete: A fast algorithm for the many pattern/many object pattern match
+  problem.
+\newblock {\em Artificial intelligence}, 19(1):17--37, 1982.
+
+\bibitem[Ing]{cis587}
+Giorgio Ingargiola.
+\newblock {CIS587}: {The} {RETE}
+  {Algorithm}.\\\url{http://www.cis.temple.edu/~giorgio/cis587/readings/rete.html}.
+
+\bibitem[Jac98]{jackson1999introduction}
+Peter Jackson.
+\newblock {\em Introduction to {Expert Systems International Computer Science
+  Series}}.
+\newblock Addison-Wesley Pub Co, ISBN, 1998.
+
+\bibitem[Min90]{minton1990quantitative}
+Steven Minton.
+\newblock Quantitative results concerning the utility of explanation-based
+  learning.
+\newblock {\em Artificial Intelligence}, 42(2):363--391, 1990.
+
+\end{thebibliography}

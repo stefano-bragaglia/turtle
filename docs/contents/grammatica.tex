@@ -1,0 +1,146 @@
+{\textbf{BNF estesa}}
+\begin{grammar}
+{\large
+<printables> ::=  0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z | ! | \# | \$ | \% | \& | ( | ) | * | + | , | - | . | / | : | ; | \textless{} | = | \textgreater{} | ? | @ | [ | \textbackslash{} | ] | \^{} | \_{} | \{ | \} | \texttildelow{} | \'{} | \"{}
+
+<nums> ::=  0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+<alphas> ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+
+<alphanums> ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+<sign> ::= \verb!+! | \verb!-!
+
+<unsigned int> ::= <nums>+
+
+<integer> ::= [<sign>]<unsigned int>
+
+<exponent> ::= \{ '\verb!e!' | '\verb!E!' \}<integer>
+
+<float> ::= <integer>'\verb!.!'<unsigned int>[<exponent>]
+ \alt <integer><exponent>
+ \alt <integer>'\verb!.!'[<exponent>]
+ \alt [<sign>]'\verb!.!'<unsigned int>[<exponent>]
+
+<boolean> ::= \verb!TRUE! | \verb!FALSE!
+
+<string> ::= '\verb!"!' <printables>+ '\verb!"!'
+
+<printout string> ::= <printables>+
+
+<comment> ::= <string>
+
+<symbol> ::= <alphas>\{<alphanums>| '\verb!_!' | '\verb!-!' \}*
+
+<constant> ::= <boolean>
+\alt<symbol>
+\alt<string>
+\alt<float>
+\alt<integer>
+
+<deffacts name> ::= <symbol>
+
+<variable symbol> ::= <alphas>+<alphanums>*
+
+<global variable> ::= '\verb!?*!'<vairable symbol>'\verb!*!'
+
+<singlefield variable> ::= '\verb!?!'<vairable symbol>
+
+%<multifield variable> ::= '\$?'<vairable symbol>
+
+<variable> ::= <singlefield variable>
+%\alt<multifield variable>
+\alt<global variable>
+
+<special function names> ::= '\verb!assert!' | '\verb!retract!' | '\verb!bind!' | '\verb!printout!' | '\verb!strategy!'
+
+<function name> ::= <printables>+\\-\{<special function names> | '(' | ')' \}*
+
+<expression> ::= <costant>
+\alt<variable>
+\alt<function call>
+
+<function call> ::= '(' <function name><expression>* ')'
+
+<fact field> ::= <global variable>
+\alt<constant>
+\alt<function call>
+
+<ordered fact pattern> ::= '(' <symbol><fact field>* ')'
+
+<fact pattern> ::= <ordered fact pattern>
+
+<deffacts construct> ::= '(' '\verb!deffacts!' <deffacts name>[<comment>]\\<fact pattern>* ')'
+
+<rule name> ::= <symbol>
+
+<integer expression> ::= <expression>
+
+<rule property> ::= '(' '\verb!salience!' <integer expression> ')'
+
+<declaration> ::= '(' '\verb!declare!' <rule property>  ')'
+
+<rhs term> ::= <constant>
+\alt <variable>
+\alt <function call>
+
+<lhs term> ::= <constant>
+\alt <singlefield variable>
+
+<rhs constraint> ::= <rhs term>
+
+<lhs constraint> ::= <lhs term>
+
+<ordered pattern ce> ::= '(' <symbol><lhs constraint>* ')'
+
+<pattern ce> ::= <ordered pattern ce>
+
+<assigned pattern ce> ::= <singlefield variable> '\verb!<-!' <pattern ce>
+
+<test ce> ::= '(' '\verb!test!' <function call>  ')'
+
+%<and ce> ::= '(' '\verb!and!' <conditional element>+ ')'
+
+%<or ce> ::= '(' '\verb!or!' <conditional element>+ ')'
+
+%<not ce> ::= '(' '\verb!not!' <conditional element> ')'
+
+<conditional element> ::= <boolean>
+\alt <test ce>
+%\alt<and ce>
+%\alt<or ce>
+%\alt<not ce>
+\alt <pattern ce>
+\alt <assigned pattern ce>
+
+<conditional elements> ::= <conditional element>*
+
+<rhs pattern> ::= <ordered rhs pattern>
+
+<rhs patterns> ::= <rhs pattern>+
+
+<rhs function call> ::= '(' '\verb!assert!' <rhs patterns>')'
+\alt '(' '\verb!retract!' \{<singlefield variable>|<unsigned int>\}+')'
+\alt '(' '\verb!bind!' <variable><expression>')'
+\alt '(' '\verb!printout!' \{<prinout string>|<expression>\}+')'
+\alt '(' '\verb!strategy! \{\verb!depth!|\verb!breadth!|\verb!random!|\verb!complexity!|\verb!simplicity!|\verb!lex!|\verb!mea!\}')'
+
+
+<action> ::= <rhs function call>
+
+<defrule construct> ::= '(' '\verb!defrule!' <rulename>[<comment>][<declaration>]\\<conditional elements> '\verb!=>!' <action>* ')'
+
+<global assignment> ::= <global variable> '\verb!=!' <expression>
+
+<defglobal construct> ::= '(' '\verb!defglobal!' <global assignment>* ')'
+
+<construct> ::= <deffacts construct>\alt<defrule construct>\alt<defglobal construct>
+
+<line comment> ::= \{'\verb!;!'\}+ <any character until EOL>
+
+<multiline comment> ::= \{'\verb!/*!'\}+ <any character>  + \{'\verb!*/!'\}
+
+<program> ::= \{<construct>|<line comment>|<multiline comment>\}*
+}
+\end{grammar}
+

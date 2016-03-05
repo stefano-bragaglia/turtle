@@ -1,0 +1,36 @@
+\chapter{Conclusioni}
+
+Allo stato attuale il sistema non supporta diverse componenti che CLIPS fornisce.
+Di seguito vengono proposti alcuni sviluppi possibili per il futuro sia a livello di feature che di modifiche architetturali al fine di ottimizzare il sistema.
+E' stato effettuato qualche test per verificare le prestazioni del sistema. Ad esempio, è stato riscontrato, su una stessa macchina, che CLIPS esegue 22000 attivazioni al secondo contro le 800 eseguite da TURTLE; stando ad una valutazione preliminare, TURTLE è risultato essere circa 30-35 volte più lento di CLIPS\footnote{Test effettuati su una macchina con processore Intel P8600 2.4GHz. Va considerato anche l'overhead generato da Python rispetto al linguaggio C (con il quale è stato realizzato CLIPS).}.
+
+\section{Sviluppi futuri}
+
+Per semplificare e rendere più flessibili sintassi e semantica si potrebbero introdurre le variabili \textbf{multifield} ed il supporto alle \textbf{wildcard} (? e \$?).
+
+Due conditional element molto utili per evitare duplicazioni di regole e test sono l'\textbf{OR CE}, il \textbf{NOT CE} ed un'analisi per scomporre gli \textbf{AND CE}\footnote{Come già specificato, da non confondere con i predicati \emph{and}, \emph{or} e \emph{not} utilizzabili nei test.}.
+
+Per ciò che concerne la definizione dei fatti, un metodo che fornirebbe maggiore dettaglio nella formalizzazione è quello dei \textbf{template}; in tal caso si parlerebbe di \emph{unordered facts} poiché i fatti in questione sarebbero indicizzati per attributo.
+
+Attualmente, in TURTLE, la rete costruita può essere aggiornata, dopo la costruzione, aggiungendo nuove regole tramite shell o file. Non è possibile rimuovere regole se non ricostruendo l'intera rete.
+
+Per evitare riscritture di regole potrebbe tornare utile l'utilizzo del costrutto \textbf{if-then-else} per avere, all'interno di una regola, una parte destra più articolata.
+
+Il costrutto \textbf{deffunction} di CLIPS fornirebbe un livello di astrazione migliore. Allo stato attuale, è possibile definire le proprie funzioni solamente in Python.
+
+Infine, per fornire tutti gli elementi della logica proposizionale, dovrebbero essere integrati i quantificatori \textbf{forall} (per ogni) ed \textbf{exists} (esiste).
+
+A livello architetturale, sarebbe possibile velocizzare la fase di retract (e di conseguenza l'intero sistema) attraverso la condivisione di memorie beta imputabili agli stessi gruppi di pattern e relativi test. Inoltre, ottimizzazioni nella fase di scomposizione di una regola apporterebbero migliorie in termini di tempo durante la fase di matching distribuendo maggiore carico di lavoro alla fase di costruzione.
+
+Per permettere lo sviluppo incrementale di un programma a regole, risulterebbe molto utile la possibilità di rimuovere regole ed aggiungerne di nuove senza dover ricostruire interamente la rete; inoltre, introdurre il salvataggio di snapshot dello stato attuale del mondo (fatti e regole, sia di partenza che aggiunte o rimosse in fase di run) renderebbe più agile la ripresa di una computazione dopo una terminazione forzata o involontaria del sistema.
+
+Un'implementazione interessante potrebbe essere l'inserimento dell'algoritmo di ricerca informata \textbf{A*} al fine di poter utilizzare un programma \emph{skeleton} da modellare in base al problema da risolvere, specificando, ad esempio, una funzione euristica, una funzione costo di passo o gli stati del problema.
+
+\section{Ringraziamenti}
+
+La realizzazione di questo sistema è stata possibile grazie ai numerosi individui che hanno contribuito al mondo open-source, rilasciando componenti software che si sono rivelate fondamentali per TURTLE.
+
+Grazie anche a coloro che hanno reso disponibili tesi e pubblicazioni inerenti l'algoritmo RETE, documenti fondamentali senza i quali difficilmente avremmo potuto procedere nello sviluppo di un algoritmo di matching RETE-like. 
+
+Infine, ma non per ultimo, un sentito ringraziamento alla \emph{Professoressa Floriana Esposito} per averci trasmesso tenacia, determinazione, motivazione e per aver suscitato in noi studenti, durante il corso di \emph{Ingegneria della Conoscenza e Sistemi Esperti}, un interesse non indifferente verso questa branca dell'intelligenza artificiale.
+

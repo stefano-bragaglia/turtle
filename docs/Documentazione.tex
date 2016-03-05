@@ -1,0 +1,120 @@
+%
+% TURTLE
+%
+% Documentazione
+%
+
+\documentclass[12pt, a4paper]{report}
+
+\usepackage[italian]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{syntax}
+\usepackage{textcomp}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[titletoc]{appendix}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage[italiano]{algorithm2e}
+
+\lstdefinestyle{customlisp}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=Lisp,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+}
+
+%\lstset{style=customlisp}
+
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{\small{\fancyplain{}%
+{\slshape \leftmark}}}
+
+%\singlespace % interlinea singola
+\onehalfspace % interlinea 1.5
+%\doublespace % interlinea doppia
+
+\title{
+  Università degli Studi di Bari Aldo Moro
+  \\A.A. 2012-2013 
+  \\~
+  \\Ingegneria della Conoscenza e Sistemi Esperti
+  \\---------
+  \\\textbf{TURTLE}
+  \\Una expert system shell ispirata a CLIPS
+}
+  %\\Documentazione parziale \textbf{pre-release}
+  %\footnote{Documentazione parziale soggetta a continui cambiamenti poiché realizzata durante lo sviluppo del sistema.}
+
+
+\author{
+  \href{mailto:jwein.it@gmail.com}{Claudio Greco}\\
+  \#545060
+  \and
+  \href{mailto:danieleweb1987@gmail.com}{Daniele Negro}\\
+  \#528038
+  \and
+  \href{mailto:dptr.marco@gmail.com}{Marco Di Pietro}\\
+  \#477442
+}
+
+\makeindex
+
+
+\begin{document}
+% copertina
+\maketitle
+
+\begin{abstract}
+La presente documentazione descrive TURTLE, un tool per lo sviluppo di sistemi basati su conoscenza, come progetto d'esame per il corso di Ingegneria della Conoscenza e Sistemi Esperti. Questo documento illustra le caratteristiche del sistema, gli aspetti implementativi, nonché le scelte progettuali adottate al fine di ottenere un software a scopo didattico che realizzi un compromesso tra codice sorgente scalabile e riduzione della complessità legata al modello computazionale basato su regole di produzione, oltre che al linguaggio interpretato Python. Quest'ultimo obiettivo è anche la motivazione per cui il sistema prende il nome di TURTLE: un modo per scongiurare ogni preoccupazione legata alle performance in termini di velocità. Essendo la gestione di un sistema a produzioni un problema non banale, l'intento è stato quello di rendere meno degradanti possibile le prestazioni.
+\end{abstract}
+
+\tableofcontents
+
+% corpo
+\input{contents/chapter1.tex}
+\input{contents/chapter2.tex}
+\input{contents/chapter3.tex}
+\input{contents/chapter4.tex}
+
+% appendici
+\begin{appendices}
+\chapter{Grammatica del linguaggio}
+\input{contents/grammatica.tex}
+
+\chapter{Funzioni e Predicati}
+\input{contents/funzioni.tex}
+\input{contents/predicati.tex}
+
+\chapter{Esempi}
+\input{contents/esempi.tex}
+
+\chapter{Note di installazione}
+\input{contents/note.tex}
+
+\end{appendices}
+
+% bibliografia
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliografia}
+\nocite{*}
+\bibliographystyle{alpha}
+\bibliography{contents/bibliografia}
+
+\begin{flushright}
+\vspace{2cm}
+Made with \LaTeX{}
+\end{flushright}
+
+\end{document}

@@ -1,0 +1,93 @@
+\section{Funzioni}
+
+\subsection{NumberType}
+
+Ciascun termine delle seguenti funzioni deve essere numerico (\verb!IntegerType! o \verb!FloatType!) oppure una variabile di tipo numerico che verrà sostituita automaticamente se istanziata correttamente.
+
+\subsubsection{Addition}
+\emph{Sintassi}: ($+$ $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Somma i termini $x_1, ..., x_n$. Il passo base è \verb!IntgerType(0)!.
+
+
+\subsubsection{Subtraction}
+\emph{Sintassi}: ($-$ $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Sottrae i termini $x_1, ..., x_n$. Il passo base è $x_n$.
+
+
+\subsubsection{Multiplication}
+\emph{Sintassi}: ($*$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Moltiplica i termini $x_1, ..., x_n$. Il passo base è \verb!IntegerType(1)!.
+
+
+\subsubsection{Division}
+\emph{Sintassi}: ($/$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Divide i termini $x_1, ..., x_n$. Il passo base è $x_1$.
+
+
+\subsubsection{Module}
+\emph{Sintassi}: ($\%$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Calcola il resto della divisione tra i termini $x_1, ..., x_n$. Il passo base è $x_1$.
+
+
+\subsubsection{Power}
+\emph{Sintassi}: ($**$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Calcola la potenza di $x_1$ con esponente il prodotto dei termini $x_2, ..., x_n$. Il passo base è $x_1$.
+
+
+\subsubsection{Abs}
+\emph{Sintassi}: ($abs$ $ \mathrm{x}$)\\
+
+Calcola il valore assoluto di $x$. E' un wrapper per la funzione \verb!abs! di Python.
+
+
+\subsubsection{Minimum}
+\emph{Sintassi}: ($min$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Trova il minimo tra i termini $x_1, ..., x_n$. E' un wrapper per la \verb!min! di Python.
+
+
+\subsubsection{Maximum}
+\emph{Sintassi}: ($max$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Trova il massimo tra i termini $x_1, ..., x_n$. E' un wrapper per la funzione \verb!max! di Python.
+
+\subsubsection{Randint}
+\emph{Sintassi}: ($randint$ $ \mathrm{x_1 \ x_2}$)\\
+
+Restituisce un numero intero casuale compreso tra $x_1$ e $x_2$ inclusi. Il primo termine non deve essere necessariamente più piccolo del secondo.
+
+\subsection{LexemeType: StringType}
+
+\subsubsection{Strcat}
+\emph{Sintassi}: ($strcat$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Concatena le stringhe $x_1, ..., x_n$ restituendo un nuovo  \verb!StringType!.
+
+\subsubsection{Substr}
+\emph{Sintassi}: ($substr$ $ \mathrm{string \ start \ end}$)\\
+
+Restituisce una sottostringa compresa tra gli indici di posizione start ed end (escluso) di una stringa passata in input. La funzione si comporta come lo \emph{slicing} di Python, in cui l'intervallo considerato inizia dalla posizione start e termina nella posizione end-1. Se entrambi gli indici superano il massimo range specificabile, viene restituita l'intera stringa in input. Se uno solo degli indici supera il range di posizioni possibili si hanno due casi: se \verb!start! è out of range allora viene restituita una sottostringa data dagli indici \verb!0! ed \verb!end! (\verb![0:end]!); se \verb!end! è  out of range viene restituita una sottostringa data dagli indici \verb!start! e \verb!ultima posizione stringa in input! (\verb![start:]!).
+
+\subsubsection{Strlen}
+\emph{Sintassi}: ($strlen$ $ \mathrm{string}$)\\
+
+Calcola la lunghezza della stringa in input ed utilizza un \verb!IntegerType! come valore di ritorno.
+
+\subsubsection{Strindex}
+\emph{Sintassi}: ($strindex$ $ \mathrm{string \ substring}$)\\
+
+Cerca un carattere o una sottostringa all'interno di una stringa e, in caso di successo, restituisce la posizione iniziale della sequenza di caratteri ricercata. In caso contrario viene restituito l'intero negativo \verb!-1!. Il risultato viene memorizzato in un \verb!IntegerType! utilizzato come valore di ritorno.
+
+\subsection{LexemeType: SymbolType}
+
+\subsubsection{Symcat}
+\emph{Sintassi}: ($symcat$ $ \mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Concatena i simboli $x_1, ..., x_n$ restituendo un nuovo  \verb!SymbolType!.
+

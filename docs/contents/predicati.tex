@@ -1,0 +1,83 @@
+\section{Predicati}
+
+\subsection{NumberType e LexemeType}
+
+Ciascun termine dei seguenti predicati deve essere numerico (\verb!IntegerType! o \verb!FloatType!), una lexeme (\verb!StringType! o \verb!SymbolType!), \verb!BooleanType! oppure una variabile di tipo compatibile che verrà sostituita automaticamente se istanziata correttamente.
+
+\subsubsection{Equal}
+\emph{Sintassi}: ($eq$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Confronta i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se i termini sono tutti uguali, altrimenti \verb!FALSE!.
+
+
+\subsubsection{Not equal}
+\emph{Sintassi}: ($neq$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Confronta i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se almeno uno dei termini è diverso dagli altri, altrimenti \verb!FALSE!.
+
+\subsection{NumberType e StringType}
+
+Ciascun termine dei seguenti predicati deve essere numerico (\verb!IntegerType! o \verb!FloatType!), una stringa (\verb!StringType!), \verb!BooleanType! oppure una variabile di tipo compatibile che verrà sostituita automaticamente se istanziata correttamente. Eccezioni sono i predicati logici \verb!and!, \verb!or! e \verb!not! che accettano come parametri esclusivamente dei valori booleani e/o altri predicati.
+
+\subsubsection{Equal}
+\emph{Sintassi}: ($eq$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Confronta i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se i termini sono tutti uguali, altrimenti \verb!FALSE!.
+
+
+\subsubsection{Not equal}
+\emph{Sintassi}: ($neq$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Confronta i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se almeno uno dei termini è diverso dagli altri, altrimenti \verb!FALSE!.
+
+
+\subsubsection{Less than}
+\emph{Sintassi}: ($<$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Verifica l'esistenza di una relazione d'ordine stretto \verb!<! tra  i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se i termini sono in ordine crescente, altrimenti \verb!FALSE!.
+
+
+\subsubsection{Less or equal}
+\emph{Sintassi}: ($<=$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Verifica l'esistenza di una relazione d'ordine \verb!<=! tra i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se i termini sono in ordine crescente, altrimenti \verb!FALSE!.
+
+
+\subsubsection{Greater than}
+\emph{Sintassi}: ($>$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Verifica l'esistenza di una relazione d'ordine stretto \verb!>! tra i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se i termini sono in ordine decrescente, altrimenti \verb!FALSE!.
+
+
+\subsubsection{Greater or equal}
+\emph{Sintassi}: ($>=$  $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Verifica l'esistenza di una relazione d'ordine \verb!>=! tra i termini $x_1, ..., x_n$. Restituisce il valore \verb!TRUE! se i termini sono in ordine decrescente, altrimenti \verb!FALSE!.
+
+\subsubsection{Logical and} 
+\emph{Sintassi}: ($and$ $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Esegue un \verb!and! logico tra i termini $x_1, ..., x_n$\footnote{I predicati \emph{and}, \emph{or} e \emph{not} sono differenti dai predicati \emph{and ce}, \emph{or ce} e \emph{not ce}. Mentre i primi lavorano sui suddetti predicati, questi ultimi riguardano esclusivamente i \emph{pattern ce} per verificare in fase di matching condizioni di esistenza di fatti nella working memory.}. Restituisce il valore \verb!TRUE! se ogni termine ha un valore \verb!TRUE!, altrimenti \verb!FALSE!. I termini, di solito, sono altri predicati.
+
+
+\subsubsection{Logical or}
+\emph{Sintassi}: ($or$ $\mathrm{x_1 \ x_2 \ ... \ x_n}$)\\
+
+Esegue un \verb!or! logico tra i termini $x_1, ..., x_n$. Restituisce il valore \verb!FALSE! se ogni termine ha un valore \verb!FALSE!, altrimenti \verb!TRUE!. I termini, di solito, sono altri predicati.
+
+
+\subsubsection{Logical not}
+\emph{Sintassi}: ($not$ $\mathrm{x}$)\\
+
+Predicato unario che nega il termine $x$. Restituisce il valore \verb!TRUE! se il termine è \verb!FALSE!, altrimenti \verb!FALSE!. Il termine, di solito, è un altro predicato.
+
+\subsection{Predicati Conditional Element}
+
+Sono predicati utilizzati nella parte sinistra di una regola per verificare una serie di condizioni.
+
+\subsubsection{Test}
+\emph{Sintassi}: ($test$ $\mathrm{x}$)\\
+
+Predicato unario che testa una condizione $x$. Restituisce il valore \verb!TRUE! se la condizione verificata è vera, altrimenti \verb!FALSE!. E' utilizzato come wrapper di predicati su costanti e variabili nella \verb!LHS! di una regola ed è un conditional element.
+
+

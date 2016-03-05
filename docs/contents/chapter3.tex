@@ -1,0 +1,116 @@
+% Capitolo 3
+
+\chapter{Dettagli implementativi}
+L'implementazione del sistema è interamente realizzata in \textbf{Python}\footnote{La versione utilizzata è la  2.7.}, un linguaggio di grande supporto all'implementazione immediata di idee, data la sua notevole \textbf{espressività}. Quest'ultima si è rivelata un vantaggio per esprimere e condividere concetti sotto forma di codice chiaro e compatto. Tuttavia, poiché quest'ultimo è interamente interpretato, il problema che si riscontra maggiormente è in alcuni bug che spesso passano inosservati, se non definendo opportuni test grazie al supporto di moduli come il debugger \textbf{pdb} \footnote{E' possibile mandare in esecuzione il sistema in modalità debug utilizzando come parametro aggiuntivo \textbf{-m pdb} (\url{http://docs.python.org/2/library/pdb.html}).}.
+
+\section{Il sistema dei tipi}
+
+I tipi di dati realizzati fanno riferimento a quelli proposti da CLIPS (nonché dal linguaggio LISP). Utilizzando l'ereditarietà, si è definito un tipo di base denominato \textbf{BaseType} dal quale derivano tipi che a loro volta sono superclassi e costituiscono la seguente gerarchia:
+
+\begin{itemize}
+	\item \textbf{BooleanType}: rappresenta un valore booleano e si indica con i simboli \verb!TRUE! e \verb!FASLE!.
+	\item \textbf{NumberType}: superclasse per la definizione di tipi numerici.
+		\begin{itemize}
+			\item \textbf{IntegerType}: rappresenta un valore intero, positivo o negativo. Il valore intero massimo specificabile è legato all'implementazione in Python\footnote{Il massimo intero specificabile, per Python v2.x, è definito in \emph{sys.maxint} mentre il minimo equivale a quest'ultimo più uno.}.
+			\item \textbf{FloatType} :  rappresenta un valore floating point, positivo o negativo. Il valore intero massimo specificabile è legato all'implementazione in Python \footnote{Per maggiori informazioni consultare \emph{sys.float_info}.}.
+		\end{itemize}
+	\item \textbf{LexemeType}: superclasse per la definizione di tipi alfanumerici.
+		\begin{itemize}
+			\item \textbf{SymbolType}: rappresenta il tipo maggiormente utilizzato, composto da caratteri alfanumerici e dai simboli ``\verb!-!'' e ``\verb!_!''.
+			\item \textbf{StringType}: rappresenta il tipo di dato stringa racchiusa tra doppi apici ``\verb!"!'' e contenente qualsiasi carattere stampabile. Questo tipo si differenzia dal SymbolType per il numero di caratteri utilizzabili e soprattutto per la capacità di poter utilizzare gli spazi.  
+		\end{itemize}
+	\item \textbf{VariableType}: superclasse per la definizione dei tipi di variabili. Le variabili trattate non prevedono \textbf{wildcard}.
+		\begin{itemize}
+			\item \textbf{SinglefieldVariableType}: rappresenta una variabile single field che interessa un singolo campo di un fatto o di un pattern. Essa si dichiara all'interno della parte sinistra di una regola e, se necessario, anche nella parte destra. Alcuni esempi di variabili single field sono: 
+\verb!?a!, \verb!?var!, \verb!?a1!, \verb!?var1!.
+			%\item \textbf{MultifieldVariableType}
+			\item \textbf{GlobalVariableType}: rappresenta una variabile globale. Le variabili globali sono condivise durante tutta l'esecuzione di un programma. Hanno una sintassi differente da quelle locali; alcuni esempi sono: \verb!?*data-nascita*!, \verb!?*x*!, \verb!?*y1*!.
+		\end{itemize}
+	\item \textbf{FunctionType}: superclasse per la definizione dei tipi di funzioni disponibili.
+		\begin{itemize}
+			\item \textbf{FunctionCallType}: rappresenta una chiamata ad una funzione o ad un predicato utilizzabili sia nelle due parti delle regole che nella definizione di fatti. E' possibile quindi definire un campo di un fatto come il risultato di una determinata funzione che lavori su numeri, stringhe o valori booleani.
+			\item \textbf{SpecialFunctionCallType}: rappresenta una chiamata ad una funzione speciale. Le funzioni speciali permettono di interagire e manipolare lo stato del sistema piuttosto che elaborare solo dati come invece fanno le funzioni. Alcuni esempi sono: \verb!assert!, \verb!retract!, \verb!printout!. Si utilizzano nella RHS di una regola eccetto la funzione speciale \verb!test! che viene utilizzata nella LHS per verificare dei predicati sulle variabili.
+		\end{itemize}
+	%\item \textbf{ConditionalElementType}
+\end{itemize} 
+
+
+\section{Variabili, funzioni e valutazione}
+Come già osservato, il sistema supporta l'utilizzo di variabili di differente tipo. Nella versione attuale del sistema è possibile utilizzare le variabili \emph{globali} e \emph{single field}. Esse possono essere utilizzate sia nei fatti che nelle regole, oltre che nelle funzioni.
+
+Quando un fatto viene definito all'interno del costrutto \textbf{deffacts} è possibile utilizzare esclusivamente variabili globali poiché la shell d'interazione non prevede la possibilità di definire variabili locali da riga di comando. In questo costrutto è possibile utilizzare funzioni e predicati che coinvolgano o meno variabili globali; la valutazione delle variabili, di funzioni e di predicati, avviene prima dell'inserimento dei fatti all'interno della working memory. Se una variabile globale non è stata definita o viene utilizzata in una funzione che non accetta parametri del tipo della variabile, il sistema interrompe l'operazione corrente ed un'eccezione viene sollevata.
+
+Nella definizione di un pattern di un fatto, nella parte sinistra della regola, è possibile specificare variabili locali (single field) e globali. Tali variabili concorreranno al match durante il \emph{recognize-act cycle}; non sono ancora presenti pattern conditional element di tipo not e or. Tuttavia, si consideri che, per le variabili, è possibile definire dei test opportuni (sempre nella LHS di una stessa regola) per verificare uno o più predicati.
+
+Se una regola viene attivata, le sue azioni potrebbero consistere nella stampa su \emph{stdout} di contenuti elaborati, nell'asserzione di nuovi fatti o nella ritrattazione di essi. In tali casi è possibile utilizzare variabili globali e locali\footnote{Il controllo della presenza di una variabile locale nella LHS non viene effettuato in fase di parsing per non introdurre ulteriori controlli. Tale inconsistenza si noterà solo in fase d'esecuzione. Si lascia al buon senso e alla responsabilità dello sviluppatore l'attenzione verso questi effetti collaterali.}, funzioni e predicati.
+
+Per tenere traccia delle variabili globali (o condivise) durante l'esecuzione di un programma, è stato realizzato un \textbf{environment} al quale accedono tutte le componenti interessate e che viene condiviso durante tutto il ciclo di esecuzione di un programma, dal parsing del file fino all'esecuzione dell'ultima regola applicabile.
+Perciò, quando si rende necessaria la valutazione di una variabile, viene consultato l'environment per ritrovarne il valore corrente.
+
+La visita e la valutazione di variabili, funzioni e predicati avviene tramite la classe \textbf{evaluator}, che si occupa di visitare ciascun nodo in base al suo tipo e di valutarne il contenuto. L'evaluator si compone di un metodo di default che restituisce il nodo visitato nel caso in cui non sia stato definito un comportamento per quel tipo di nodo, e di metodi definiti per ciascun tipo che si occupano di elaborarne il contenuto ove possibile. Infine, è presente il metodo \emph{evaluate} che cerca di valutare il contenuto del nodo richiamando se stesso nel caso in cui vi siano annidamenti (ad esempio nel caso di nodi che contengono funzioni).
+
+Le funzioni ed i predicati possono essere utilizzati quando si definiscono dei fatti, nei test presenti nella parte sinistra della regola e nella parte destra di quest'ultima.
+
+\begin{figure}
+\centering
+ \begin{verbatim}
+      (deffacts
+         (soggetto1 eta 30)
+         (soggetto2 eta 20)
+         ...)
+
+      (defrule maggiore
+         (?s1 eta ?x)
+         (?s2 eta ?y)
+         (test (> ?x ?y))
+         =>
+         (assert (?s1 maggiore ?s2))
+         (printout ?s1 "è più grande di" ?s2)
+         (printout "totale:" (+ ?x ?y)))
+ \end{verbatim}
+ \caption{Utilizzo di variabili e funzioni in una regola.}
+\end{figure}
+
+\section{Strutture dati per il conflict set}
+
+La risoluzione dei conflitti implica l'utilizzo di una strategia che riordini l'insieme in base a determinati criteri. In TURTLE, sono stati adottati diversi \emph{container} dati per adattarsi al tipo di strategia utilizzato ed eseguire attivazioni in un tempo costante.
+Per le strategie più complesse è stato definito un tipo di dato \textbf{KeyHeapq} allo scopo di riordinare le attivazioni sfruttando una coda con priorità e specificando, a seconda del caso, la chiave per effettuare tale ordinamento.
+I container utilizzati sono:
+\begin{itemize}
+\item \textbf{Lista} per la strategia \textbf{Depth}: permette l'inserimento e la rimozione di un elemento come se fosse una pila\footnote{In Python una lista si può utilizzare come fosse una pila attraverso i metodi \emph{append} e \emph{pop} rispettivamente per inserire e rimuovere elementi dalla coda in un tempo costante.}
+\item \textbf{Deque} per la strategia \textbf{Breadth}.
+\item \textbf{Lista} per la strategia \textbf{Random}.
+\item \textbf{KeyHeapq} per la strategia \textbf{Simplicity} con chiave la \textbf{complessità} di una regola.
+\item \textbf{KeyHeapq} per la strategia \textbf{Complexity} con chiave la \textbf{complessità} negativa di una regola.
+\item \textbf{KeyHeapq} per la strategia \textbf{LEX} con chiave gli \textbf{indici dei fatti} che soddisfano una regola.
+\item \textbf{KeyHeapq} per la strategia \textbf{MEA} con chiave il primo \textbf{indice di un fatto all'interno di un token} che soddisfa una regola.
+\end{itemize}
+
+
+\section{Confronto con CLIPS}
+
+TURTLE, allo stato attuale, supporta solo un piccolo sottoinsieme di feature ereditate da CLIPS, con qualche variazione sintattica.
+Le caratteristiche principali sono:
+\begin{itemize}
+	\item Supporto dei fatti ordinati (senza template).
+	\item Presenza di variabili globali definite attraverso il costrutto \textbf{defglobal} ed utilizzabili nella parte destra di una regola, come parametro di una funzione e come campo nella definizione di un nuovo fatto. Rispetto a CLIPS, si è scelto di poter utilizzare le variabili globali anche nella parte sinistra di una regola.
+	\item Utilizzo del costrutto \textbf{deffacts} per asserire uno o più fatti con la possibilità di utilizzare funzioni e variabili globali.
+	\item Utilizzo del costrutto \textbf{defrule} per definire una regola\footnote{Una regola è considerata valida solo se ha almeno un pattern nella parte sinistra. Ne consegue che non sono ammesse attivazioni di tipo wildcard.}. 
+	\item Utilizzo del costrutto \textbf{declare} in defrule per definire le proprietà di una regola. Attualmente l'unica proprietà supportata è la \textbf{salience}.
+	\item Presenza di variabili locali \textbf{single field}.
+	\item Possibilità di utilizzare la funzione speciale \textbf{test} nella parte sinistra di una regola per verificare uno o più predicati su una o più variabili locali.
+	\item Utilizzo della fuzione speciale \textbf{assert} nella parte destra di una regola per asserire uno o più fatti contenenti costanti, variabili globali e variabili locali già presenti nella parte sinistra.
+	\item Utilizzo della funzione speciale \textbf{retract} per eliminare uno o più fatti.
+	\item Presenza della funzione speciale \textbf{bind} per modificare una variabile globalmente o localmente a seconda del tipo.
+	\item Possibilità di variare il criterio di ordinamento del conflict set (agenda) tramite la funzione speciale \textbf{strategy}, sia tramite shell che in fase d'esecuzione, specificando la strategia da adottare tra le azioni nella parte destra di una regola.
+	\item Possibilità di stampare contenuti su standard output tramite la funzione speciale \textbf{printout}.
+\end{itemize}
+
+Consultare l'help online presente nella shell\footnote{digitare \textbf{help \emph{nome_comando}} per ottenere maggiori informazioni.} per conoscere meglio tali feature.
+
+\section{Estensibilità}
+Durante lo sviluppo del sistema, si è cercato di rendere il codice scalabile per sviluppi futuri. L'intento di realizzare un sistema di base che fosse predisposto alla realizzazione di nuove feature è stato al centro del processo di progettazione.
+
+Tra le estensioni che si potrebbero introdurre in futuro, vi sono due punti cruciali che necessitano una certa elasticità per un facile aggiornamento: l'introduzione di nuovi nodi nell'algoritmo di matching e l'inserimento di nuove funzioni utilizzabili con i tipi di dati presenti.
+
+Nel primo caso si è realizzata una superclasse \emph{Node} che è possibile estendere con le caratteristiche del nodo che si intende implementare, mentre, per il secondo caso è stata realizzata una classe denominata \emph{FunctionMapper}, la quale si occupa di caricare le funzioni disponibili leggendo dei file \emph{.py} presenti all'interno della directory in cui specificare nuove funzioni. Tali file estendono la classe \emph{Module}, definita per permettere all'utente di inserire nuovi file \emph{.py} contenenti nuove funzioni e nuovi predicati definiti in base alle proprie esigenze\footnote{Per comprendere meglio come realizzare nuove funzioni e nuovi predicati, consultare i file \emph{Functions.py} e \emph{Predicates.py}.}.
