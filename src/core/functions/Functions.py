@@ -7,22 +7,21 @@
 """
 
 import operator as op
-
-from Module import unpack_args, Module
-
-from core.typesystem.TypeSystem import *
-
-from core.exceptions.Exceptions import EvaluateException
-
 import random
-
 import time
+# from Module import unpack_args, Module
+from functools import reduce
+
+from core.functions.Module import Module
+from core.functions.Module import unpack_args
+from core.typesystem.TypeSystem import *
 
 
 class Functions(Module):
     """
     Class for the representation of the available functions.
     """
+
     def __init__(self):
         Module.__init__(self)
         self.add_method('+', self.addition)
@@ -76,11 +75,11 @@ class Functions(Module):
     @unpack_args
     def division(self, *args):
         if not len(args) > 1:
-            raise EvaluateException('\ requires at least 2 parameters!' + ' (' + str(len(args)) + ' given).')
+            raise EvaluateException(f' requires at least 2 parameters! ({len(args)} given).')
 
         elif False in [isinstance(x, NumberType) for x in args]:
-            raise EvaluateException('\ requires all parameters to be numbers!')
-        
+            raise EvaluateException(' requires all parameters to be numbers!')
+
         elif 0 in [x.content for x in args[1:]]:
             raise EvaluateException('division by zero!')
 
@@ -93,7 +92,7 @@ class Functions(Module):
 
         elif False in [isinstance(x, NumberType) for x in args]:
             raise EvaluateException('% requires all parameters to be numbers!')
-        
+
         elif 0 in [x.content for x in args[1:]]:
             raise EvaluateException('module by zero!')
 
@@ -154,7 +153,8 @@ class Functions(Module):
         if not len(args) is 3:
             raise EvaluateException('Substr requires 3 parameters!' + ' (' + str(len(args)) + ' given).')
 
-        elif not isinstance(args[0], StringType) or not isinstance(args[1], IntegerType) or not isinstance(args[2], IntegerType):
+        elif not isinstance(args[0], StringType) or not isinstance(args[1], IntegerType) or not isinstance(args[2],
+                                                                                                           IntegerType):
             raise EvaluateException('Substr requires 1 string and 2 integers!')
 
         return args[0].sub_string(args[1].content, args[2].content)

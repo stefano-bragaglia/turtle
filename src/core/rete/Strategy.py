@@ -6,7 +6,7 @@ from collections import deque
 
 from time import time
 
-from utilities.KeyHeapq import KeyHeapq
+from utils import KeyHeapq
 
 
 class Strategy(object):

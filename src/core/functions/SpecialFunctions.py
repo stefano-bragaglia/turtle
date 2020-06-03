@@ -2,19 +2,17 @@
 
 import sys
 
-from Module import unpack_args, Module
-
-from core.typesystem.TypeSystem import *
-
 from core.entities.OrderedFact import OrderedFact
-
-from core.exceptions.Exceptions import EvaluateException
+from core.functions.Module import Module
+from core.functions.Module import unpack_args
+from core.typesystem.TypeSystem import *
 
 
 class SpecialFunctions(Module):
     """
     Class for the representation of the available special functions.
     """
+
     def __init__(self):
         Module.__init__(self)
         self.add_method('printout', self.printout)

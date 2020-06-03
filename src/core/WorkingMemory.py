@@ -53,7 +53,7 @@ class WorkingMemory(object):
     def __init__(self):
         self.__wmes = {}
         self.__facts = defaultdict(lambda: False)
-        self.__counter = long(1)
+        self.__counter = 1
 
     @property
     def wmes(self):

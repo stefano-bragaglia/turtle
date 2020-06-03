@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
-"""
-    TURTLE
-    An expert system shell inspired by CLIPS syntax
-    @author Claudio Greco, Daniele Negro, Marco Di Pietro
-"""
-
+import importlib.util
 import os
-
-from inspect import imp, getmembers
+from inspect import getmembers
+from inspect import isclass
 
 from core.exceptions.Exceptions import EvaluateException
+
+
+# from inspect import imp, getmembers
 
 
 class FunctionMapper(object):
@@ -19,6 +17,7 @@ class FunctionMapper(object):
     In particular, it loads the modules containing
     the functions available to the user.
     """
+
     def __init__(self):
         self.__map = {}
 
@@ -37,7 +36,7 @@ class FunctionMapper(object):
         for key in keys:
             # If the considered function of the module is not already present in the system,
             # then it saves a reference to that function in the dictionary.
-            if not key in self.__map:
+            if key not in self.__map:
                 self.__map[key] = name().get_method(key)
 
     def load_file(self, filename):
@@ -49,11 +48,17 @@ class FunctionMapper(object):
 
         # If the file has .py extension, then it loads that module.
         if file_ext.lower() == '.py':
-            py_mod = imp.load_source(mod_name, filename)
+            # py_mod = imp.load_source(mod_name, filename)
+            spec = importlib.util.spec_from_file_location(mod_name, filename)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
 
         # If the file has .pyc extension, then it loads that module.
         elif file_ext.lower() == '.pyc':
-            py_mod = imp.load_compiled(mod_name, filename)
+            # py_mod = imp.load_compiled(mod_name, filename)
+            spec = importlib.util.spec_from_file_location(mod_name, filename)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
 
         else:
             raise EvaluateException('Unable to find the file ' + filename + '!')

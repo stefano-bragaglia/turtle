@@ -8,10 +8,8 @@
 
 import pyparsing as pp
 
+from core.exceptions.Exceptions import ParseException
 from core.typesystem.TypeSystem import *
-
-from core.exceptions.Exceptions import ParseException 
-
 
 # --- Definition of the basic elements of the language.
 
@@ -86,7 +84,8 @@ GLOBAL_VARIABLE.setParseAction(lambda s, l, t: GlobalVariableType(t[0]))
 SPECIAL_FUNCTION_NAMES = (pp.Keyword('assert') | pp.Keyword('retract') | pp.Keyword('bind'))
 
 # Defines the name of a function excluding the keyboards reserved to the special function calls.
-FUNCTION_NAME = ~SPECIAL_FUNCTION_NAMES + pp.Word(pp.printables.translate(None, '()' + pp.nums), pp.printables.translate(None, '()'))
+FUNCTION_NAME = ~SPECIAL_FUNCTION_NAMES + pp.Word(pp.printables.translate(str.maketrans('', '', '()' + pp.nums)),
+                                                  pp.printables.translate(str.maketrans('', '', '()')))
 
 # Defines a constant.
 CONSTANT = BOOLEAN | SYMBOL | STRING | FLOAT | INTEGER
@@ -191,7 +190,8 @@ AND_CE = OB + pp.Keyword('and') + pp.OneOrMore(pp.Group(CONDITIONAL_ELEMENT)) + 
 AND_CE.setParseAction(lambda s, l, t: ConditionalElementType(t[0], t[1:]))
 
 # Defines an 'or' conditional element between facts in the left part of a rule.
-OR_CE = OB + pp.Keyword('or') + pp.OneOrMore(pp.Group(CONDITIONAL_ELEMENT).setParseAction(lambda s, l, t: t.asList())) + CB
+OR_CE = OB + pp.Keyword('or') + pp.OneOrMore(
+    pp.Group(CONDITIONAL_ELEMENT).setParseAction(lambda s, l, t: t.asList())) + CB
 
 # Defines the parse action for the 'or' conditional element between facts.
 OR_CE.setParseAction(lambda s, l, t: ConditionalElementType(t[0], t[1:]))
@@ -206,7 +206,8 @@ NOT_CE.setParseAction(lambda s, l, t: ConditionalElementType(t[0], t[1]))
 CONDITIONAL_ELEMENT << (BOOLEAN | TEST_CE | AND_CE | OR_CE | NOT_CE | PATTERN_CE | ASSIGNED_PATTERN_CE)
 
 # Defines a list of conditions.
-CONDITIONAL_ELEMENTS = pp.Group(pp.Group(PATTERN_CE | ASSIGNED_PATTERN_CE) + pp.ZeroOrMore(pp.Group(CONDITIONAL_ELEMENT)))
+CONDITIONAL_ELEMENTS = pp.Group(
+    pp.Group(PATTERN_CE | ASSIGNED_PATTERN_CE) + pp.ZeroOrMore(pp.Group(CONDITIONAL_ELEMENT)))
 
 # Defines an ordered fact with possible variables of the assert.
 ORDERED_RHS_PATTERN = OB + SYMBOL + pp.Group(pp.ZeroOrMore(RHS_CONSTRAINT)) + CB
@@ -222,10 +223,10 @@ RHS_PATTERNS = pp.OneOrMore(pp.Group(RHS_PATTERN)).setParseAction(lambda s, l, t
 
 # Defines the call of a special function in the right part of a rule.
 RHS_FUNCTION_CALL = OB + pp.Literal('assert') + RHS_PATTERNS + CB | \
-    OB + pp.Literal('retract') + pp.OneOrMore(SINGLEFIELD_VARIABLE | UNSIGNED_INT) + CB | \
-    OB + pp.Literal('bind') + VARIABLE + EXPRESSION + CB | \
-    OB + pp.Literal('printout') + pp.OneOrMore(PRINTOUT_STRING | EXPRESSION) + CB | \
-    OB + pp.Literal('strategy') + pp.oneOf('depth breadth random complexity simplicity lex mea') + CB
+                    OB + pp.Literal('retract') + pp.OneOrMore(SINGLEFIELD_VARIABLE | UNSIGNED_INT) + CB | \
+                    OB + pp.Literal('bind') + VARIABLE + EXPRESSION + CB | \
+                    OB + pp.Literal('printout') + pp.OneOrMore(PRINTOUT_STRING | EXPRESSION) + CB | \
+                    OB + pp.Literal('strategy') + pp.oneOf('depth breadth random complexity simplicity lex mea') + CB
 
 # Defines an action in the right part of a rule.
 ACTION = RHS_FUNCTION_CALL
@@ -235,8 +236,9 @@ ACTIONS = pp.Group(pp.ZeroOrMore(ACTION))
 
 # Defines the construct for the declaration of a rule.
 DEFRULE_CONSTRUCT = OB + pp.Keyword('defrule').suppress() + pp.Group(RULE_NAME + pp.Optional(COMMENT) + \
-    pp.Optional(DECLARATION)).setParseAction(lambda s, l, t: t.asList()) + \
-    CONDITIONAL_ELEMENTS + pp.Literal('=>').suppress() + ACTIONS + CB
+                                                                     pp.Optional(DECLARATION)).setParseAction(
+    lambda s, l, t: t.asList()) + \
+                    CONDITIONAL_ELEMENTS + pp.Literal('=>').suppress() + ACTIONS + CB
 
 # Defines the parse action for the name of a rule.
 RULE_NAME.setParseAction(lambda s, l, t: SymbolType(t[0]))
@@ -302,6 +304,7 @@ class Parser(object):
     """
     Class for the parsing of a program of the system.
     """
+
     def __init__(self, debug=False):
         self.setDebug(debug)
 

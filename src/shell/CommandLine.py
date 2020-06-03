@@ -7,35 +7,20 @@
 """
 
 import cmd
-
-import platform
-
+import copy
 import os
-
+import platform
 import time
 
-import copy
-
-from core.exceptions.Exceptions import ParseException, EvaluateException
-
-from core.parser.Parser import Parser
-
 from core.Builder import Builder
-
-from core.Evaluator import Evaluator
-
-from core.rete.Network import Network
-
-from core.rete.Strategy import DepthStrategy
-
+from core.exceptions.Exceptions import EvaluateException
+from core.exceptions.Exceptions import ParseException
 from core.functions.Functions import Functions
-
 from core.functions.Predicates import Predicates
-
-from core.typesystem.TypeSystem import BaseType
-
+from core.parser.Parser import Parser
+from core.rete.Network import Network
 from core.rete.Plotter import Plotter
-
+from core.rete.Strategy import DepthStrategy
 
 wstream = None
 
@@ -45,18 +30,21 @@ colored_loaded = False
 # then it uses the pyreadline module; otherwise, it uses
 # the readline module and it sets the autocompletion.
 try:
-    if os.name is not 'posix':
+    if os.name != 'posix':
         import pyreadline as readline
     else:
         import readline
+
         if 'libedit' in readline.__doc__:
             readline.parse_and_bind("bind ^I rl_complete")
         else:
             readline.parse_and_bind("tab: complete")
 
 except Exception:
-    print '\nWarning! Pyreadline or readline should be installed.\n   Unix-like: "pip install readline"\n \
-            Windows: "pip install pyreadline"\nThe system will start without keys support.\n'
+    print('\nWarning! Pyreadline or readline should be installed.\n'
+          '   Unix-like: "pip install readline"\n'
+          '   Windows:   "pip install pyreadline"\n'
+          'The system will start without keys support.\n')
 
 # Se sono disponibili le librerie aggiuntive
 # allora utilizza i colori; in caso contrario
@@ -66,12 +54,13 @@ try:
     from colorama import init
     from termcolor import colored
     from colorama import AnsiToWin32
+
     init(wrap=False)
     wstream = AnsiToWin32(sys.stderr).stream
     colored_loaded = True
 
 except ImportError:
-    print 'To use colors install termcolor and colorama:\n   "pip install colorama termcolor"'
+    print('To use colors install termcolor and colorama:\n   "pip install colorama termcolor"')
     colored_loaded = False
 
 
@@ -181,7 +170,7 @@ class CommandLine(cmd.Cmd):
         if self.__elapsed_time < 1e-10:
             self.__elapsed_time += 1e-10
 
-        s += str(self.__network.fired_activations/self.__elapsed_time) + ' rules per second.\n'
+        s += str(self.__network.fired_activations / self.__elapsed_time) + ' rules per second.\n'
         return s
 
     # --- Beginning of the commands.
@@ -205,9 +194,9 @@ class CommandLine(cmd.Cmd):
                 assertions = '(assert ' + line + ')'
                 ast = self.__parser.parseAssert(assertions)
 
-                print ''
+                print('')
                 facts = self.__builder.build_assert(ast)
-                print ''
+                print('')
 
                 if not self.__working_memory:
                     self.do_reset('')
@@ -218,16 +207,16 @@ class CommandLine(cmd.Cmd):
                     fact_assertion = self.__network.assert_fact(fact)
 
                     if fact_assertion is None:
-                        print 'The fact already exists!\n'
+                        print('The fact already exists!\n')
 
             except ParseException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except EvaluateException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
 
     # Retract
     def do_retract(self, line):
@@ -251,25 +240,25 @@ class CommandLine(cmd.Cmd):
                 retractions = '(retract ' + line + ')'
                 ast = self.__parser.parseRetract(retractions)
 
-                print ''
+                print('')
                 for identifier in ast[1:]:
                     if self.__network.retract_fact(identifier.content):
-                        print 'The fact with identifier ' + str(identifier) + ' has been removed.'
+                        print('The fact with identifier ' + str(identifier) + ' has been removed.')
                     else:
-                        print 'The fact ' + str(identifier) + ' doesn\'t exist!'
-                print ''
+                        print('The fact ' + str(identifier) + ' doesn\'t exist!')
+                print('')
 
             except ParseException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except EvaluateException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
 
         else:
-            print '\nOne or more fact identifiers must be specified!\n'
+            print('\nOne or more fact identifiers must be specified!\n')
 
     # Deffacts
     def do_deffacts(self, line):
@@ -291,9 +280,9 @@ class CommandLine(cmd.Cmd):
                 deffacts = '(deffacts ' + line + ')'
                 ast = self.__parser.parseProgram(deffacts)
 
-                print ''
+                print('')
                 (facts, _) = self.__builder.build(ast)
-                print ''
+                print('')
 
                 self.__facts.extend(facts)
 
@@ -304,17 +293,17 @@ class CommandLine(cmd.Cmd):
                     self.__network.assert_fact(fact)
 
             except ParseException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except EvaluateException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except Exception as e:
-                print ''
+                print('')
                 self.print_error(self.__default_exception_message)
-                print ''
+                print('')
 
     # Defrule
     def do_defrule(self, line):
@@ -337,16 +326,16 @@ class CommandLine(cmd.Cmd):
                 defrule = '(defrule ' + line + ')'
                 ast = self.__parser.parseProgram(defrule)
 
-                print ''
+                print('')
                 (_, rules) = self.__builder.build(ast)
-                print ''
+                print('')
 
                 if not self.__production_memory:
                     self.do_reset('')
 
                 for rule in rules:
                     if rule.name in self.__rules:
-                        print '[WARNING] Redefining an existing rule \"' + str(rule.name) + '\"!'
+                        print('[WARNING] Redefining an existing rule \"' + str(rule.name) + '\"!')
 
                     self.__rules[rule.name] = rule
 
@@ -356,17 +345,17 @@ class CommandLine(cmd.Cmd):
                     self.__network.add_rule(rule)
 
             except ParseException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except EvaluateException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except Exception as e:
-                print ''
+                print('')
                 self.print_error(self.__default_exception_message)
-                print ''
+                print('')
 
     # Deglobal
     def do_defglobal(self, line):
@@ -386,23 +375,23 @@ class CommandLine(cmd.Cmd):
             try:
                 defglobal = '(defglobal ' + line + ')'
                 ast = self.__parser.parseProgram(defglobal)
-                print ''
+                print('')
                 self.__builder.build(ast)
-                print ''
+                print('')
             except ParseException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except EvaluateException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
             except Exception as e:
-                print ''
+                print('')
                 self.print_error(self.__default_exception_message)
-                print ''
+                print('')
         else:
-            print '\nYou should specify a global variable!\n'
+            print('\nYou should specify a global variable!\n')
 
     # Clear
     def do_clear(self, line):
@@ -429,13 +418,13 @@ class CommandLine(cmd.Cmd):
         line = ''
 
         try:
-            print '\nBuilding network... '
+            print('\nBuilding network... ')
 
             self.__builder.reset()
 
             self.__evaluator.environment.global_variables = copy.copy(self.__globals)
 
-            self.__network.build_network(copy.deepcopy(self.__facts), copy.deepcopy(self.__rules.values()))
+            self.__network.build_network(copy.deepcopy(self.__facts), copy.deepcopy(list(self.__rules.values())))
 
             self.__agenda = self.__network.agenda
 
@@ -444,17 +433,17 @@ class CommandLine(cmd.Cmd):
             self.__production_memory = self.__network.production_memory
 
             if not self.__rules:
-                print '\nEmpty network created.\n'
+                print('\nEmpty network created.\n')
 
-            print 'OK.\n'
+            print('OK.\n')
         except EvaluateException as e:
-            print ''
+            print('')
             self.print_error(str(e))
-            print ''
+            print('')
         except Exception as e:
-            print ''
+            print('')
             self.print_error(str(e))
-            print ''
+            print('')
 
     # Globals
     def do_globals(self, line):
@@ -465,12 +454,12 @@ class CommandLine(cmd.Cmd):
         """
         line = ''
         if self.__evaluator.environment.global_variables:
-            print ''
+            print('')
             for v in self.__evaluator.environment.global_variables:
-                print str(v.name) + ' = ' + str(self.__evaluator.environment.global_variables[v])
-            print ''
+                print(f"{v.name} = {self.__evaluator.environment.global_variables[v]}")
+            print('')
         else:
-            print '\nNo globals defined!\n'
+            print('\nNo globals defined!\n')
 
     # Facts
     def do_facts(self, line):
@@ -482,11 +471,11 @@ class CommandLine(cmd.Cmd):
         """
         line = ''
         if self.__working_memory:
-            print ''
-            print self.__working_memory
-            print ''
+            print('')
+            print(self.__working_memory)
+            print('')
         else:
-            print '\nWorking memory not initialized yet!\n'
+            print('\nWorking memory not initialized yet!\n')
 
     # Rules
     def do_rules(self, line):
@@ -497,10 +486,10 @@ class CommandLine(cmd.Cmd):
         """
         line = ''
         if self.__production_memory:
-            print ''
-            print self.__production_memory
+            print('')
+            print(self.__production_memory)
         else:
-            print '\nProduction memory not initialized yet!\n'
+            print('\nProduction memory not initialized yet!\n')
 
     # Agenda
     def do_agenda(self, line):
@@ -517,11 +506,11 @@ class CommandLine(cmd.Cmd):
         """
         line = ''
         if self.__agenda:
-            print ''
-            print self.__agenda
-            print ''
+            print('')
+            print(self.__agenda)
+            print('')
         else:
-            print '\nNetwork not initialized yet!\n'
+            print('\nNetwork not initialized yet!\n')
 
     # Run
     def do_run(self, times):
@@ -540,33 +529,33 @@ class CommandLine(cmd.Cmd):
             try:
                 times = abs(int(times))
             except ValueError:
-                print ''
+                print('')
                 self.print_error('Times must be an integer. Example: (run 10).')
-                print ''
+                print('')
             except Exception:
-                print ''
+                print('')
                 self.print_error(self.__default_exception_message)
-                print ''
+                print('')
         else:
             times = None
 
         if self.__network is not None:
             try:
                 if self.__network.agenda.get_activations():
-                    print '\nStarting recognize-act-cycle...'
+                    print('\nStarting recognize-act-cycle...')
                     self.start_timer()
                     self.__network.recognize_act_cycle(times)
                     self.stop_timer()
                     if self.__stats:
-                        print self.get_stats()
+                        print(self.get_stats())
                 else:
-                    print '\nNo rule to fire!\n'
+                    print('\nNo rule to fire!\n')
             except EvaluateException as e:
-                print ''
+                print('')
                 self.print_error(str(e))
-                print ''
+                print('')
         else:
-            print '\nYou should execute reset before run!\n'
+            print('\nYou should execute reset before run!\n')
 
     # Strategy
     def do_strategy(self, strategy):
@@ -583,7 +572,7 @@ class CommandLine(cmd.Cmd):
         """
 
         if not self.__network:
-            print '\nYou should execute reset before changing the strategy!\n'
+            print('\nYou should execute reset before changing the strategy!\n')
             return
 
         if strategy:
@@ -592,11 +581,11 @@ class CommandLine(cmd.Cmd):
                 self.__strategy = self.__network.agenda.strategies[strategy]()
                 self.__network.agenda.change_strategy(self.__strategy)
             else:
-                print '\nThe specified strategy doesn\'t exist!\n'
+                print('\nThe specified strategy doesn\'t exist!\n')
         else:
-            print ''
-            print str(self.__network.agenda.strategy)
-            print ''
+            print('')
+            print(self.__network.agenda.strategy)
+            print('')
 
     # --- Fine comandi
 
@@ -604,19 +593,19 @@ class CommandLine(cmd.Cmd):
 
     # Visualizza la lista delle funzioni supportate dal sistema
     def help_functions(self):
-        print '\n\tA list of supported functions.\n\tThey are used inside an assert, a deffacts or a defrule.\n'
+        print('\n\tA list of supported functions.\n\tThey are used inside an assert, a deffacts or a defrule.\n')
 
         sys.stdout.write('\t')
-        print '\n\t'.join(self.__functions_list)
-        print ''
+        print('\n\t').join(self.__functions_list)
+        print('')
 
     # Visualizza la lista dei predicati supportati dal sistema
     def help_predicates(self):
-        print '\n\tA list of supported predicates.\n\tThey are used inside an assert, a deffacts or a defrule.\n'
+        print('\n\tA list of supported predicates.\n\tThey are used inside an assert, a deffacts or a defrule.\n')
 
         sys.stdout.write('\t')
-        print '\n\t'.join(self.__predicates_list)
-        print ''
+        print('\n\t').join(self.__predicates_list)
+        print('')
 
     # Visualizza le statistiche sul run eseguito
     def do_stats(self, line):
@@ -630,11 +619,11 @@ class CommandLine(cmd.Cmd):
         if line == 'on':
             # @TODO enable stats
             self.__stats = True
-            print 'Stats enabled.'
+            print('Stats enabled.')
         elif line == 'off':
             # @TODO disable stats
             self.__stats = False
-            print 'Stats disabled.'
+            print('Stats disabled.')
         else:
             self.print_error('Bad argument! Valid arguments are: on, off.')
 
@@ -677,9 +666,9 @@ class CommandLine(cmd.Cmd):
         """
         global wstream
         if wstream is not None:
-            print >>wstream, self.__error_prefix + msg
+            print('>>', wstream, self.__error_prefix + msg)
         else:
-            print self.__error_prefix + msg
+            print(self.__error_prefix + msg)
 
     # Help dell'help
     def help_help(self):
@@ -689,12 +678,12 @@ class CommandLine(cmd.Cmd):
 
         Usage: (help <command>)
         """
-        print """
+        print("""
         Simply write the keyword help followed by a command name.
         Please, write the command without brackets.
 
         Usage: (help <command>)
-        """
+        """)
 
     # --- Gestione file
 
@@ -708,12 +697,12 @@ class CommandLine(cmd.Cmd):
         """
 
         if not line:
-            print ''
+            print('')
             self.print_error('Filename should be specified!')
-            print ''
+            print('')
             return
 
-        print '\nLoading file... '
+        print('\nLoading file... ')
 
         try:
             ast = self.__parser.parseFile(line)
@@ -726,28 +715,28 @@ class CommandLine(cmd.Cmd):
 
             for rule in rules:
                 if rule.name in self.__rules:
-                    print '[WARNING] Redefining an existing rule \"' + str(rule.name) + '\"!'
+                    print('[WARNING] Redefining an existing rule \"' + str(rule.name) + '\"!')
 
                 self.__rules[rule.name] = rule
 
-            print 'OK.\n'
+            print('OK.\n')
 
         except ParseException as e:
-            print ''
+            print('')
             self.print_error(str(e))
-            print ''
+            print('')
         except EvaluateException as e:
-            print ''
+            print('')
             self.print_error(str(e))
-            print ''
+            print('')
         except IOError as e:
-            print ''
+            print('')
             self.print_error('Unable to access the file \"' + line + '\"!')
-            print ''
+            print('')
         except Exception as e:
-            print ''
+            print('')
             self.print_error(self.__default_exception_message)
-            print ''
+            print('')
 
     def do_draw(self, line='svg'):
         """
@@ -772,22 +761,23 @@ class CommandLine(cmd.Cmd):
 
             if line:
                 try:
-                        if line == 'png':
-                            plotter.draw_png_to_file(filename + '.png')
-                            print '\nFile', filename + '.png', 'created.\n'
-                        elif line == 'svg':
-                            plotter.draw_svg_to_file(filename + '.svg')
-                            print '\nFile', filename + '.svg', 'created.\n'
-                        else:
-                            print '\nInvalid format! Valid formats are: png, svg!\n'
+                    if line == 'png':
+                        plotter.draw_png_to_file(filename + '.png')
+                        print('\nFile', filename + '.png', 'created.\n')
+                    elif line == 'svg':
+                        plotter.draw_svg_to_file(filename + '.svg')
+                        print('\nFile', filename + '.svg', 'created.\n')
+                    else:
+                        print('\nInvalid format! Valid formats are: png, svg!\n')
 
                 except IOError:
-                    print '\nYou have to specify a correct filename!\n'
+                    print('\nYou have to specify a correct filename!\n')
             else:
                 plotter.draw_svg_to_file(filename + '.svg')
-                print '\nFile', filename + '.svg', 'created.\n'
+                print('\nFile', filename + '.svg', 'created.\n')
         else:
-            print '\nNetwork not built yet!\n'
+            print('\nNetwork not built yet!\n')
+
     # --- Gestione della terminazione
 
     # Quit
@@ -817,5 +807,5 @@ class CommandLine(cmd.Cmd):
         Usage:  (EOF)
                 Press CTRL+D keys
         """
-        if raw_input('Really exit?(y/n): ') == 'y':
+        if input('Really exit?(y/n): ') == 'y':
             return True

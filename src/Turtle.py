@@ -10,10 +10,8 @@ from shell.CommandLine import CommandLine
 
 if __name__ == '__main__':
     try:
-        turtle = CommandLine()
-        turtle.cmdloop()
-
+        CommandLine().cmdloop()
     except (KeyboardInterrupt, SystemExit):
-        print '\nCtrl-c detected. Exit.'
-
-    print '\nGoodbye!'
+        print('\nCtrl-c detected. Exit.')
+    finally:
+        print('\nGoodbye!')

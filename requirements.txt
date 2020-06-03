@@ -1,0 +1,6 @@
+colorama
+networkx
+pydot
+pyparsing
+pyreadline
+termcolor

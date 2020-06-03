@@ -6,29 +6,15 @@
     @author Claudio Greco, Daniele Negro, Marco Di Pietro
 """
 
-from core.parser.Parser import Parser
-
-from core.typesystem.TypeSystem import *
-
-from core.Evaluator import Evaluator
-
-from core.functions.FunctionMapper import FunctionMapper
-
-from core.functions.SpecialFunctions import SpecialFunctions
-
-from core.functions.Functions import Functions
-
-from core.functions.Predicates import Predicates
-
-from core.Environment import Environment
-
-from core.WorkingMemory import WorkingMemory
-
-from core.ProductionMemory import ProductionMemory
-
 from core.entities.OrderedFact import OrderedFact
-
 from core.entities.Rule import Rule
+from core.Environment import Environment
+from core.Evaluator import Evaluator
+from core.functions.FunctionMapper import FunctionMapper
+from core.functions.Functions import Functions
+from core.functions.Predicates import Predicates
+from core.functions.SpecialFunctions import SpecialFunctions
+from core.typesystem.TypeSystem import *
 
 
 class Builder(object):
@@ -38,6 +24,7 @@ class Builder(object):
     the preliminary evaluation of a sequence
     of facts and rules.
     """
+
     def __init__(self):
         # Saves an instance of the Environment class.
         self.__environment = Environment()
@@ -80,16 +67,16 @@ class Builder(object):
             # it is evaluated and the result is added in the set of global variables.
             if item_type == 'DEFGLOBAL_CONSTRUCT':
                 for assignment in item_content:
-                    print 'Defining defglobal:', assignment.name
+                    print('Defining defglobal:', assignment.name)
                     assignment.content = self.__evaluator.evaluate(assignment.content)
                     self.__environment.set_global_variable(assignment)
 
             # If the construct corresponds to the definition of a list of facts, then
             # the attributes of each fact are evaluated and the fact is added to the list of facts.
             elif item_type == 'DEFFACTS_CONSTRUCT':
-                print 'Defining deffacts:', item_content[0]
+                print('Defining deffacts:', item_content[0])
                 for fact in item_content[1:]:
-                    for i in xrange(len(fact[1])):
+                    for i in range(len(fact[1])):
                         # Evaluates each attribute of the considered fact.
                         fact[1][i] = self.__evaluator.evaluate(fact[1][i])
 
@@ -106,7 +93,7 @@ class Builder(object):
             # will be evaluated after the matching phase between facts and rules.
             elif item_type == 'DEFRULE_CONSTRUCT':
                 name = item_content[0][0]
-                print 'Defining defrule:', name
+                print('Defining defrule:', name)
 
                 # Saves an instance of the considered rule.
                 r = Rule(name)
@@ -121,7 +108,7 @@ class Builder(object):
                 lhs = item_content[1]
 
                 # Evaluates each element of the left part of the rule.
-                for i in xrange(len(lhs)):
+                for i in range(len(lhs)):
 
                     # Checks if the element of the left part of the rule represents a test.
                     if isinstance(lhs[i][0], SpecialTestCallType):
@@ -164,9 +151,9 @@ class Builder(object):
         facts = []
 
         for fact in ast[1:]:
-            print 'Defining fact:', fact[0]
+            print('Defining fact:', fact[0])
 
-            for i in xrange(len(fact[1])):
+            for i in range(len(fact[1])):
                 # Evaluates each attribute of the considered fact.
                 fact[1][i] = self.__evaluator.evaluate(fact[1][i])
 
